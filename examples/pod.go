@@ -69,3 +69,21 @@ func DeletePod(name, namespace string) error {
 	log.Printf("delete %s pod in %s namespace successfully", name, namespace)
 	return nil
 }
+
+func GetPod(name, namespace string) (*coreV1.Pod, error) {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, err
+	}
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+	get, err := client.CoreV1().Pods(namespace).Get(context.TODO(), name, metaV1.GetOptions{})
+	if err != nil {
+		log.Printf("get %s pod in %s namespace failed, err: %v", name, namespace, err)
+		return nil, err
+	}
+	log.Printf("get %s pod in %s namespace successfully, pod: %v", name, namespace, get.String())
+	return get, nil
+}
