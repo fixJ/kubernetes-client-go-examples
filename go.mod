@@ -1,0 +1,1 @@
+module "kubernetes-client-go-examples"
