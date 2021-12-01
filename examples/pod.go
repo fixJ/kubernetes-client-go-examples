@@ -105,3 +105,21 @@ func UpdatePod(namespace string, p *coreV1.Pod) error {
 	log.Printf("update pod in %s namespace successfully", namespace)
 	return nil
 }
+
+func ListPod(namespace string) (*coreV1.PodList, error) {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, err
+	}
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+	list, err := client.CoreV1().Pods(namespace).List(context.TODO(), metaV1.ListOptions{})
+	if err != nil {
+		log.Printf("list pods in %s namespace failed, err: %v", namespace, err)
+		return nil, err
+	}
+	log.Printf("list pods in %s namespace successfully", namespace)
+	return list, nil
+}
