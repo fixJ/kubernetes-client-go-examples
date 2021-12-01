@@ -21,12 +21,24 @@ func CreatePod(namespace, name, image string) error {
 	p := coreV1.Pod{
 		ObjectMeta: metaV1.ObjectMeta{
 			Name: name,
+			Labels: map[string]string{
+				"app": "nginx",
+				"env": "prod",
+				"namespace": "dev",
+			},
+
 		},
 		Spec: coreV1.PodSpec{
 			Containers: []coreV1.Container{
 				{
 					Name: name,
 					Image: image,
+					Ports: []coreV1.ContainerPort{
+						{
+							ContainerPort: 80,
+							Protocol: coreV1.Protocol("TCP"),
+						},
+					},
 				},
 			},
 		},
