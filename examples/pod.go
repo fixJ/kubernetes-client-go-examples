@@ -51,3 +51,21 @@ func CreatePod(namespace, name, image string) error {
 	log.Printf("create pod in %s namespace successfully", namespace)
 	return nil
 }
+
+func DeletePod(name, namespace string) error {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return err
+	}
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+	err = client.CoreV1().Pods("dev").Delete(context.TODO(), name, metaV1.DeleteOptions{})
+	if err != nil {
+		log.Printf("delete %s pod in %s namespace failed, err: %v", name, namespace, err)
+		return err
+	}
+	log.Printf("delete %s pod in %s namespace successfully", name, namespace)
+	return nil
+}
