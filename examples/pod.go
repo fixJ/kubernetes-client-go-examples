@@ -123,3 +123,29 @@ func ListPod(namespace string) (*coreV1.PodList, error) {
 	log.Printf("list pods in %s namespace successfully", namespace)
 	return list, nil
 }
+
+func WatchPod(namespace string) error {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return err
+	}
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+	watch, err := client.CoreV1().Pods(namespace).Watch(context.TODO(), metaV1.ListOptions{})
+	if err != nil {
+		return  err
+	}
+	ch := watch.ResultChan()
+	for {
+		select {
+		case event, ok := <- ch:
+			if ok {
+				log.Printf("watch pod: %v", event)
+			} else {
+				log.Printf("watch pod not ok")
+			}
+		}
+	}
+}
